@@ -33,11 +33,9 @@ set showmatch
 " GTK Gui {{{ 
 
     if exists('g:GtkGuiLoaded')
-        echo "Huzzah!"
 "        augroup muhfont
 "            autocmd!
 "            autocmd  FileType rust call rpcnotify(1, 'Gui', 'Font', 'Fira Code 11')
-"            echo "Booyah"
 "            
 "        augroup END
   endif
@@ -93,9 +91,10 @@ call minpac#init()
 call minpac#add('k-takata/minpac', {'type': 'opt'})
 call minpac#add('dracula/vim')
 call minpac#add('arcticicestudio/nord-vim')
+call minpac#add('rafi/awesome-vim-colorschemes')
 " The popester.
 call minpac#add('tpope/vim-commentary')
-call minpac#add('tpope/vim-scriptease', {'type': 'opt'})
+call minpac#add('tpope/vim-scriptease')
 call minpac#add('tpope/vim-surround')
 call minpac#add('tpope/vim-obsession')
 
@@ -106,7 +105,7 @@ call minpac#add('junegunn/fzf.vim')
 call minpac#add('junegunn/vader.vim')
 
 call minpac#add('d-rezzer/vim-hi')
-call minpac#add('d-rezzer/nvim-telearena')
+"call minpac#add('d-rezzer/nvim-telearena')
 
 call minpac#add('vim-airline/vim-airline')
 call minpac#add('vim-airline/vim-airline-themes')
@@ -118,53 +117,23 @@ call minpac#add('easymotion/vim-easymotion')
 call minpac#add('rust-lang/rust.vim') "Rust
 call minpac#add('mattn/webapi-vim')  "Web Api
 
-call minpac#add('HerringtonDarkholme/yats.vim') "Typescript
-call minpac#add('mhartington/nvim-typescript',{ 'build': './install.sh'}) "Typescript
+call minpac#add('neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'})
+"call minpac#add('neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'})
+"call minpac#add('HerringtonDarkholme/yats.vim') "Typescript
+call minpac#add('leafgarland/typescript-vim')
+
+"Terminal
+
+call minpac#add('kassio/neoterm')
 
 " GUI enhancements
-call minpac#add('w0rp/ale')
 call minpac#add('machakann/vim-highlightedyank')  "highlights muh yanks!
 
-" Language Client related shenanigans {{{
-call minpac#add('autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' })
-call minpac#add('ncm2/ncm2')
-call minpac#add('roxma/nvim-yarp')
 
-autocmd BufEnter * call ncm2#enable_for_buffer()  "enable ncm2 for all buffers
-" IMPORTANT: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
-" NOTE: you need to install completion sources to get completions. Check
-" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-call minpac#add('ncm2/ncm2-bufword')
-
-call minpac#add('ncm2/ncm2-path')
-" }}}
 
 " }}}
 
-" Language Client settings {{{
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'] ,
-    \ 'javascript': ['javascript-typescript-stdio'],
-    \ 'typescript': ['javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-    \ 'python': ['/usr/local/bin/pyls'],
-    \ 'lua': ['lua-lsp'],
-   \ }
-
-
-let g:LanguageClient_rootMarkers = {
-        \ 'javascript': ['project.json'],
-        \ 'rust': ['Cargo.toml'],
-        \ }
-
-let g:LanguageClient_autoStart = 1
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>i
-
-" }}}
 
 command! PackUpdate call minpac#update()
 command! PackClean call minpac#clean()
@@ -188,7 +157,6 @@ if has('nvim') " I can haz nvim?
         " switch to normal mode
         tnoremap jk  <C-\><C-n> 
 
-
         "when we switch to normal mode in terminal
         "show a cursor marker indicating where we were in terminal mode
         highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
@@ -199,6 +167,7 @@ if has('nvim') " I can haz nvim?
         tnoremap <M-k> <c-\><c-n><c-w>k
         tnoremap <M-l> <c-\><c-n><c-w>l
         tnoremap <C-q> :q<CR>
+
 
 endif
 
@@ -274,6 +243,12 @@ nnoremap <leader>e <S-$>
 "goto begginning of line
 nnoremap <leader>a <S-^>
 
+"COC maps
+nnoremap <leader>dd <Plug>(coc-definition)
+nnoremap <leader>dr <Plug>(coc-references)
+nnoremap <leader>dj <Plug>(coc-implementation)
+
+
 "====================================================
 " switching between terminal buffer and another pane.
 "====================================================
@@ -317,10 +292,23 @@ nnoremap <leader>( viw<esc>a)<esc>bi(<esc>lel
 nnoremap <leader>[ viw<esc>a]<esc>bi[<esc>lel
 nnoremap <leader>{ viw<esc>a}<esc>bi{<esc>lel
 nnoremap <leader>< viw<esc>a><esc>bi<<esc>lel
+nnoremap <localleader>tn  :tabnew<cr>
+nnoremap <localleader>tc  :tabclose<cr>
 
+"resize window
+nnoremap <silent><localleader><localleader>w  :resize -10<cr>
+nnoremap <silent><localleader><localleader>s  :resize +10<cr>
+nnoremap <silent><localleader><localleader>a  :vertical resize -10<cr>
+nnoremap <silent><localleader><localleader>d  :vertical resize +10<cr>
 
 "clear the entire buffer
 nnoremap <leader>da ggdG
+
+
+nnoremap <silent> <leader>rf :TREPLSendFile<cr>
+nnoremap <silent> <leader>rl :TREPLSendLine<cr>
+nnoremap <silent>  <leader>rs :TREPLSendSelection<cr>
+
 " }}}
 
 " My Insert Remaps {{{
@@ -335,13 +323,6 @@ inoremap jk <esc>
 "supress using esc button to go to normal mode
 inoremap <esc> <nop>
 " }}}
-" Ale Linter {{{
-let g:ale_sign_column_always = 1
-let g:ale_rust_cargo_use_check = 1
-let g:ale_virtual_text_cursor = 0
-
-
-" }}}
 " insert mode remaps {{{         
 "====================================================
 "emacs residual insert movement keys..
@@ -353,8 +334,8 @@ inoremap <C-l> <Esc><S-l>zzi
 
 augroup filetype_typescript
         autocmd!
-        autocmd BufRead *.ts set filetype=typescript
-        autocmd BufRead *.tsx set filetype=typescript
+        autocmd VimEnter,BufRead,BufNewFile *.ts set filetype=typescript
+        autocmd VimEnter,BufRead,BufNewFile *.tsx set filetype=typescript
 augroup END
 
 
@@ -369,7 +350,33 @@ augroup filetype_rust
         autocmd FileType rust inoremap ;;t #[cfg(test)]
         autocmd FileType rust inoremap ;t #[test]<esc><cr><S-o>
         autocmd FileType rust inoremap ;v vec![]<esc>li
+        autocmd FileType rust inoremap ;w .unwrap();
+        "replace a {} in quotes with "{:?}" 
+        autocmd FileType rust inoremap ;dq <esc><S-^>ci"{:?}  
+
+        autocmd FileType rust inoremap ;kk () { }<esc>ho<esc>o<esc>o<esc>kka
+        autocmd FileType rust inoremap ;sf String::From("")<esc>hi
+
 augroup END
+
+inoremap /. <Cmd>:call Snakecase()<cr>
+
+function! Snakecase()
+    let line = split(getline('.'), ' ')
+    if line[-1] != "="
+        call add(line,"=")        
+    endif
+
+    let subln = line[0] . ' ' . join(line[1:-2], '_') . ' ' . line[-1]
+    call setline('.', subln)
+    execute "normal! magg`a$" 
+    
+endfunction
+
+command! SnakeIt call Snakecase()
+
+
+
 let g:rustc_path = "/home/d-rezzer/.cargo/bin/rustc"
 
 let g:rustfmt_autosave = 1  "format rust file whenever it is saved
@@ -392,6 +399,10 @@ function! Runterm()
         
 endfunction
 
+
+
+
+
 "toggle between showing line number and relative line numbers
 function! <SID>ToggleNumber() 
     if(&relativenumber == 1)
@@ -408,4 +419,19 @@ endfunc
 iabbrev @@ ryanlmartin@gmail.com
 " }}}
 "vim:foldmethod=marker:foldlevel=0
+
+":echo b:terminal_job_id
+
+"Teleareana quick bits
+
+tnoremap ;h he
+
+function! CheckHealth()
+    call jobsend(32, "he\<cr>")
+endfunction
+
+
+
+
+
 
